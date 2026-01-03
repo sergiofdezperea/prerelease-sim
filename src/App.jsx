@@ -61,11 +61,12 @@ function App() {
     const handleCopyDecklist = () => {
         if (cards.length === 0) return;
 
-        // Group cards: "4xOP14-001"
+        // Group cards by base id removing _pN suffix (e.g. OP14-001_p1 -> OP14-001)
         const counts = {};
         cards.forEach(card => {
-            const id = card.id;
-            counts[id] = (counts[id] || 0) + 1;
+            const rawId = card.id;
+            const baseId = rawId.replace(/_p\d+$/i, ''); // elimina sufijos _pN al final
+            counts[baseId] = (counts[baseId] || 0) + 1;
         });
 
         const lines = Object.entries(counts).map(([id, count]) => `${count}x${id}`);
