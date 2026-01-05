@@ -20,15 +20,10 @@ const RARITY = {
  */
 export const filterCardsBySet = (allCards) => {
     if (!allCards) return [];
-    // Adjust filter logic based on actual Set Names in JSON. 
-    // For now assuming strings like "OP14", "EB04" are present in card.cardSet or card.id
-    return allCards.filter(card => {
-        // Check ID prefix or set name
-        const id = card.id || '';
-        const set = card.cardSet || '';
-        return id.startsWith('OP14') || id.startsWith('EB04') ||
-            set.includes('OP14') || set.includes('EB04');
-    });
+    // Since we are loading specific expansion files, we can just return all cards.
+    // Or we could pass a 'setPrefix' argument if we needed strict filtering.
+    // For now, trust the file content.
+    return allCards;
 };
 
 /**

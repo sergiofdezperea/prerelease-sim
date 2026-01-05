@@ -1,12 +1,12 @@
 import React from 'react';
 
-const CardModal = ({ card, onClose }) => {
+const CardModal = ({ card, onClose, imageDir = 'cards' }) => {
     if (!card) return null;
 
     // Helper to get image path (duplicates logic from CardGrid but that's fine for now, or we could pass the computed src)
     const getImagePath = (c) => {
         if (!c) return '';
-        const localPath = `${import.meta.env.BASE_URL}cards/${c.id.replace(/[^a-zA-Z0-9-_]/g, '_')}.png`;
+        const localPath = `${import.meta.env.BASE_URL}${imageDir}/${c.id.replace(/[^a-zA-Z0-9-_]/g, '_')}.png`;
         return localPath;
     };
 
@@ -56,7 +56,7 @@ const CardModal = ({ card, onClose }) => {
                             <span className="text-gray-400 text-sm">{card.rarity}</span>
                         </div>
                         <h2 className="text-4xl font-extrabold text-white mb-1">{card.name}</h2>
-                        <div className="text-gray-400 text-sm font-mono">{card.id}</div>
+                        <div className="text-gray-400 text-sm font-mono">{card.id.replace(/_p.*/, '')}</div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

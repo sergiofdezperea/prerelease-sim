@@ -22,9 +22,9 @@ const CardGrid = ({ cards, title, onClick }) => {
                 ${isAA ? 'ring-2 ring-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)]' : ''}
               `}
                         >
-                            {/* Use local image path. Sanitize ID just in case to match script logic */}
+                            {/* Use local image path.*/}
                             <img
-                                src={`${import.meta.env.BASE_URL}cards/${card.id.replace(/[^a-zA-Z0-9-_]/g, '_')}.png`}
+                                src={import.meta.env.BASE_URL + (card.imageDir || 'cards') + `/${card.id}.png`}
                                 onError={(e) => {
                                     // Fallback to remote if local fails (and if remote is absolute)
                                     if (card.imageUrl && card.imageUrl.startsWith('http')) e.target.src = card.imageUrl;
@@ -34,7 +34,7 @@ const CardGrid = ({ cards, title, onClick }) => {
                                 loading="lazy"
                             />
                             <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-xs p-1 text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                {card.id} - {card.rarity}
+                                {card.id.replace(/_p.*/, '')} - {card.rarity}
                             </div>
                         </div>
                     );

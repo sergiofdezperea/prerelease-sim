@@ -3,12 +3,19 @@ import CardGrid from './components/CardGrid';
 import { generateBox, generatePrerelease } from './utils/packLogic';
 // Import JSON directly if valid, or fetch it.
 // Vite allows importing JSON.
-import cardData from './data/one_piece_cards.json';
+// import cardData from './data/one_piece_cards.json'; // REMOVED static import
 
 import CardModal from './components/CardModal';
 
+const EXPANSIONS = [
+    { id: 'op14-eb04', name: '[OP14-EB04] - THE AZURE SEA’S SEVEN', file: 'one_piece_cards_op14', imageDir: 'cards/OP14' },
+    // { id: 'op13', name: '[OP13] - Carrying On His Will', file: 'one_piece_cards_op13', imageDir: 'cards/OP13' },
+];
+
 function App() {
-    const [cards, setCards] = useState([]);
+    const [currentExpansion, setCurrentExpansion] = useState(EXPANSIONS[0].id);
+    const [allCards, setAllCards] = useState([]); // Loaded card pool
+    const [cards, setCards] = useState([]); // Opened pack cards
     const [stats, setStats] = useState({ hits: 0, srs: 0, leaders: 0 });
     const [mode, setMode] = useState(''); // 'BOX' or 'PRERELEASE'
     const [notification, setNotification] = useState('');
@@ -16,10 +23,25 @@ function App() {
 
     // Load card data check
     useEffect(() => {
-        if (!cardData || cardData.length === 0) {
-            console.error("No card data found in one_piece_cards.json");
-        }
-    }, []);
+        const loadData = async () => {
+            try {
+                const exp = EXPANSIONS.find(e => e.id === currentExpansion);
+                let dataModule = await import('./data/' + exp.file + '.json');
+                if (dataModule && dataModule.default) {
+                    // Inject imageDir into cards for CardGrid
+                    const loadedCards = dataModule.default.map(c => ({ ...c, imageDir: exp.imageDir }));
+                    setAllCards(loadedCards);
+                    setCards([]);
+                    setMode('');
+                } else {
+                    console.error("Failed to load card data");
+                }
+            } catch (error) {
+                console.error("Error loading card data:", error);
+            }
+        };
+        loadData();
+    }, [currentExpansion]);
 
     const calculateStats = (drawnCards) => {
         let hits = 0;
@@ -47,7 +69,7 @@ function App() {
     };
 
     const handleOpenBox = () => {
-        const newCards = generateBox(cardData);
+        const newCards = generateBox(allCards);
         setCards(newCards);
         setStats(calculateStats(newCards));
         setMode('BOX');
@@ -56,7 +78,7 @@ function App() {
     };
 
     const handleOpenPrerelease = () => {
-        const newCards = generatePrerelease(cardData);
+        const newCards = generatePrerelease(allCards);
         setCards(newCards);
         setStats(calculateStats(newCards));
         setMode('PRERELEASE');
@@ -89,7 +111,18 @@ function App() {
             <div className="max-w-7xl mx-auto">
                 <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-gray-700 pb-6">
                     <h1 className="text-4xl font-extrabold text-blue-400">
-                        Prerelease Sim<br /> OP14 - EB04
+                        Prerelease Sim
+                        <div className="mt-2 text-lg">
+                            <select
+                                value={currentExpansion}
+                                onChange={(e) => setCurrentExpansion(e.target.value)}
+                                className="bg-gray-800 border border-gray-600 text-white rounded p-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                {EXPANSIONS.map(exp => (
+                                    <option key={exp.id} value={exp.id}>{exp.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </h1>
 
                     <div className="flex flex-wrap gap-4">
@@ -160,6 +193,7 @@ function App() {
                 <CardModal
                     card={selectedCard}
                     onClose={() => setSelectedCard(null)}
+                    imageDir={EXPANSIONS.find(e => e.id === currentExpansion)?.imageDir}
                 />
             </div>
         </div>
