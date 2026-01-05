@@ -9,7 +9,7 @@ import CardModal from './components/CardModal';
 
 function App() {
     const [cards, setCards] = useState([]);
-    const [stats, setStats] = useState({ hits: 0, srs: 0 });
+    const [stats, setStats] = useState({ hits: 0, srs: 0, leaders: 0 });
     const [mode, setMode] = useState(''); // 'BOX' or 'PRERELEASE'
     const [notification, setNotification] = useState('');
     const [selectedCard, setSelectedCard] = useState(null);
@@ -24,20 +24,26 @@ function App() {
     const calculateStats = (drawnCards) => {
         let hits = 0;
         let srs = 0;
+        let leaders = 0;
 
         drawnCards.forEach(card => {
             const isAA = card.id.includes('_p') || card.id.endsWith('*');
+            const isLeader = card.rarity === 'L';
             const isSEC = card.rarity === 'SEC';
             const isSP = card.rarity === 'TR' || card.rarity === 'SP'; // Treasure Rare or SP
             const isSR = card.rarity === 'SR';
 
             if (isAA || isSEC || isSP) {
                 hits++;
-            } else if (isSR) {
+            }
+            if (isSR) {
                 srs++;
             }
+            if (isLeader) {
+                leaders++;
+            }
         });
-        return { hits, srs };
+        return { hits, srs, leaders };
     };
 
     const handleOpenBox = () => {
@@ -87,12 +93,12 @@ function App() {
                     </h1>
 
                     <div className="flex flex-wrap gap-4">
-                        <button
+                        {/* <button
                             onClick={handleOpenBox}
                             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors shadow-lg shadow-blue-900/50"
                         >
                             Abrir 24 Sobres (Caja Completa)
-                        </button>
+                        </button> */}
                         <button
                             onClick={handleOpenPrerelease}
                             className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition-colors shadow-lg shadow-purple-900/50"
@@ -119,7 +125,7 @@ function App() {
                 <main>
                     {cards.length === 0 ? (
                         <div className="text-center py-20 text-gray-500">
-                            <p className="text-xl">Select a mode above to open packs!</p>
+                            <p className="text-xl">Vamos a abrir sobres!</p>
                         </div>
                     ) : (
                         <>
@@ -134,6 +140,11 @@ function App() {
                                 <div className="flex items-center gap-2">
                                     <span className="text-purple-400 font-bold text-xl">{stats.srs}</span>
                                     <span className="text-sm text-gray-400 uppercase tracking-wider">SRs</span>
+                                </div>
+                                <div className="w-px h-8 bg-gray-600"></div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-purple-400 font-bold text-xl">{stats.leaders}</span>
+                                    <span className="text-sm text-gray-400 uppercase tracking-wider">Leaders</span>
                                 </div>
                             </div> */}
 

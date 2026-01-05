@@ -82,8 +82,12 @@ const CardModal = ({ card, onClose }) => {
                         )}
                         {(card.cost && card.cost !== '-') && (
                             <div className="bg-gray-800 p-3 rounded-lg">
-                                <div className="text-xs text-gray-500 uppercase">Cost</div>
-                                <div className="font-semibold text-gray-200">{card.cost}</div>
+                                <div className="text-xs text-gray-500 uppercase">
+                                    {card.category === 'LEADER' ? 'Life' : 'Cost'}
+                                </div>
+                                <div className="font-semibold text-gray-200">
+                                    {card.category === 'LEADER' ? card.cost.replace('Life', '') : card.cost}
+                                </div>
                             </div>
                         )}
                         {(card.attribute && card.attribute !== '-') && (
