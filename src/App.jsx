@@ -26,15 +26,20 @@ function App() {
         const loadData = async () => {
             try {
                 const exp = EXPANSIONS.find(e => e.id === currentExpansion);
-                let dataModule = await import('./data/' + exp.file + '.json');
-                if (dataModule && dataModule.default) {
+                const response = await fetch(`data/${exp.file}.json`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                if (data && Array.isArray(data)) {
                     // Inject imageDir into cards for CardGrid
-                    const loadedCards = dataModule.default.map(c => ({ ...c, imageDir: exp.imageDir }));
+                    const loadedCards = data.map(c => ({ ...c, imageDir: exp.imageDir }));
                     setAllCards(loadedCards);
                     setCards([]);
                     setMode('');
                 } else {
-                    console.error("Failed to load card data");
+                    console.error("Failed to load card data or data is not an array");
                 }
             } catch (error) {
                 console.error("Error loading card data:", error);

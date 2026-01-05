@@ -6,7 +6,7 @@ const CardModal = ({ card, onClose, imageDir = 'cards' }) => {
     // Helper to get image path (duplicates logic from CardGrid but that's fine for now, or we could pass the computed src)
     const getImagePath = (c) => {
         if (!c) return '';
-        const localPath = `${import.meta.env.BASE_URL}${imageDir}/${c.id.replace(/[^a-zA-Z0-9-_]/g, '_')}.png`;
+        const localPath = `${imageDir}/${c.id.replace(/[^a-zA-Z0-9-_]/g, '_')}.png`;
         return localPath;
     };
 

@@ -24,7 +24,7 @@ const CardGrid = ({ cards, title, onClick }) => {
                         >
                             {/* Use local image path.*/}
                             <img
-                                src={import.meta.env.BASE_URL + (card.imageDir || 'cards') + `/${card.id}.png`}
+                                src={(card.imageDir || 'cards') + `/${card.id}.png`}
                                 onError={(e) => {
                                     // Fallback to remote if local fails (and if remote is absolute)
                                     if (card.imageUrl && card.imageUrl.startsWith('http')) e.target.src = card.imageUrl;
