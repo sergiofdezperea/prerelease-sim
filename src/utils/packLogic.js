@@ -43,12 +43,14 @@ const getRandomInt = (min, max) => {
  */
 const selectRandomCards = (pool, count) => {
     const selected = [];
-    const _pool = [...pool];
+    let _pool = [...pool];
     for (let i = 0; i < count; i++) {
         if (_pool.length === 0) break;
         const idx = getRandomInt(0, _pool.length - 1);
-        selected.push(_pool[idx]);
-        _pool.splice(idx, 1);
+        const card = _pool[idx];
+        selected.push(card);
+        // Remove valid card and duplicates to ensure uniqueness
+        _pool = _pool.filter(c => c.id !== card.id);
     }
     return selected;
 };
@@ -184,8 +186,7 @@ export const generatePrerelease = (allCards) => {
     for (let i = 0; i < 2; i++) {
         packs.push([
             ...selectRandomCards(commons, 7),
-            ...selectRandomCards(uncommons, 2),
-            draw(leaders) || draw(commons),
+            ...selectRandomCards([...uncommons, ...leaders], 3),
             draw(rares),
             getPossibleHitSlot(0.05) // 5% chance to be SR/Hit instead of 2nd Rare
         ]);
